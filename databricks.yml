@@ -1,0 +1,86 @@
+# This is a Databricks asset bundle definition for demo.
+# See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
+bundle:
+  name: demo
+  uuid: a16974c3-cb15-450d-9f62-fd177b74c468
+
+include:
+  - resources/*.yml
+  - resources/*/*.yml
+
+artifacts:
+  python_artifact:
+    type: whl
+    build: uv build --wheel
+
+sync:
+  include:
+    - src/**
+
+# Variable declarations. Assigned per target below.
+variables:
+  catalog:
+    description: UC catalog to use (set per target)
+  schema:
+    description: UC schema to use (set per target)
+  environment:
+    description: Target environment name (dev / stage / prod)
+    default: dev
+  pause_status:
+    description: Schedule pause status — PAUSED by default, set to UNPAUSED in prod
+    default: PAUSED
+
+targets:
+  # -----------------------------------------------------------------
+  # dev — ws-databricks-east-us-dev
+  # Deploy: databricks bundle deploy --target dev
+  # -----------------------------------------------------------------
+  dev:
+    mode: development
+    default: true
+    workspace:
+      host: https://adb-7405609477036548.8.azuredatabricks.net
+      profile: ws-databricks-east-us-dev
+    variables:
+      catalog: main
+      schema: ${workspace.current_user.short_name}
+      environment: dev
+      pause_status: PAUSED
+
+  # -----------------------------------------------------------------
+  # stage — ws-databricks-east-us-stage
+  # Deploy: databricks bundle deploy --target stage
+  # TODO: add profile to ~/.databrickscfg once Service Principal is ready
+  # -----------------------------------------------------------------
+  stage:
+    mode: production
+    workspace:
+      host: https://adb-7405617193389920.0.azuredatabricks.net
+      root_path: /Workspace/Users/franco_9408_hotmail.com#ext#@franco9408hotmail.onmicrosoft.com/.bundle/${bundle.name}/${bundle.target}
+    variables:
+      catalog: main
+      schema: stage
+      environment: stage
+      pause_status: PAUSED
+    permissions:
+      - user_name: franco_9408_hotmail.com#ext#@franco9408hotmail.onmicrosoft.com
+        level: CAN_MANAGE
+
+  # -----------------------------------------------------------------
+  # prod — ws-databricks-east-us-prod
+  # Deploy: databricks bundle deploy --target prod
+  # TODO: add profile to ~/.databrickscfg once Service Principal is ready
+  # -----------------------------------------------------------------
+  prod:
+    mode: production
+    workspace:
+      host: https://adb-7405610142495762.2.azuredatabricks.net
+      root_path: /Workspace/Users/franco_9408_hotmail.com#ext#@franco9408hotmail.onmicrosoft.com/.bundle/${bundle.name}/${bundle.target}
+    variables:
+      catalog: main
+      schema: prod
+      environment: prod
+      pause_status: UNPAUSED
+    permissions:
+      - user_name: franco_9408_hotmail.com#ext#@franco9408hotmail.onmicrosoft.com
+        level: CAN_MANAGE

@@ -1,12 +1,31 @@
+# Python
 .venv/
 __pycache__/
 *.pyc
+*.egg-info
+dist/
+build/
+
+# Testing
 .pytest_cache/
 .coverage
 coverage.xml
-*.egg-info/
-dist/
+
+# Databricks
+.databricks/
+
+# Entorno
 .env
 .envrc
+
+# macOS
 .DS_Store
 **/.DS_Store
+
+# Bundle scratch
+scratch/**
+!scratch/README.md
+**/explorations/**
+!**/explorations/README.md
+
+.vscode/
