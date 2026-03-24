@@ -1,0 +1,11 @@
+databricks-sdk
+databricks-connect==17.3.*
+pyspark==4.0.0
+delta-spark==4.0.0
+pytest
+pytest-cov
+pytest-mock
+importnb
+black
+isort
+flake8
